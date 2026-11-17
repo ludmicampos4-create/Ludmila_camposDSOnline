@@ -3,11 +3,11 @@ class Tablero:
     def __init__(self, tamano=10):
         self.tamano=tamano
         #iniciamos la matriz del tablero con aguao espacios vacios usando Numpy
-        self.matriz = [[0 for _ in range(tamano)] for in range(tamano)]
+        self.matriz = np.zeros((tamano, tamano), dtype=object)
     def mostrar(self):
         """muestra el tablero actual por pantalla"""
         print("   " + " ".join([str(i)for i in range(self.tamano)]))
-        print("   " + "---" * (self.tamano * 2))
+        print("   " + "-" * (self.tamano * 3))
         for i, fila in enumerate(self.matriz):
             elementos_fila =[]
             for celda in fila:
@@ -44,7 +44,7 @@ class Tablero:
             while not colocado:
                 print(f"======================================")
                 print(f"🚢COLOCANDO: {nombre_barcos}")
-                print(f"⏳BARCOS RESTANTES: {barcos_restantes}de {total_barcos}")
+                print(f"⏳BARCOS RESTANTES: {barcos_restantes} de {total_barcos}")
                 print(f"======================================")
                 self.mostrar() #muestra el tablero actual para que el jugador vea donde colocar los barcos
                     
@@ -54,45 +54,36 @@ class Tablero:
                     orientacion = input(" ➡️⬇️Introduce orientación (H para horizontal, V para vertical): ").upper()
                         #validar la horientacion y limites basicos
                     if orientacion not in ["H", "V"]:
-                            
                         print("❌😿 Error: La orientacion debe ser 'H' o 'V'.")
                         continue
-                        #comprobar si cabe y si esta libre
+                    if orientacion == "H" and columna + eslora > self.tamano:
+                        print("❌🚢Error: El barco se sale del tablero por la derecha.")
+                        continue
+                    elif orientacion == "V" and fila + eslora > self.tamano:
+                        print("❌⬇️Error: El barco se sale del tablero por abajo.")
+                        continue
+                
+                    espacio_libre = True
                     if orientacion == "H":
-                        if columna + eslora >10:
-                            print("🛳️➡️ Eror: El barco se sale del tablero por la derecha")
-                            continue
-                        #comprobamos colisiones en Horizontal
-                        espacio_libre = True
-                        for i in range(eslora):
-                            if self.matriz[fila, columna + i ] != "":
+                        for j in range(eslora):
+                            if self.matriz[fila][columna + j] !=0:
                                 espacio_libre = False
                                 break
-                        if not espacio_libre:
-                            print("❌🚢🚢 Error: Ya hay un barco en esa posicion.")
-                            continue
-                            #si pasa las pruebas, colocamos el barco
-                        for i in range(eslora):
-                            if orientacion == "H":
-                                self.matriz[fila][columna + i]= 1
-                            else:
-                                self.matriz[fila + i][columna] = 1 
-                    elif orientacion == "V":
-                        if fila + eslora >10:
-                            print("X Error: El barco se sale del tablero por abajo.")
-                            continue
-                        #comprobamos colisiones en vertical
-                        espacio_libre= True
-                        for i in range(eslora):
-                            if self.matriz[fila + i, columna] != "":
+                    else:
+                        for j in range(eslora):
+                            if self.matriz[fila + j ][columna] !=0:
                                 espacio_libre = False
                                 break
-                        if not espacio_libre:
-                            print(" ❌🚢🚢 Eror: Ya hay un barco en esa posicion.")
-                            continue
-                            #si pasa las pruebas, colocamos el barco
-                        for i in range(eslora):
-                            self.matriz[fila + i, columna] = "B"
+                    if not espacio_libre:
+                        print("❌🚢🚢Eror: Ya hay un barco en esa posicion.")
+                        continue
+                    if orientacion == "H":
+                        for j in range(eslora):
+                            self.matriz[fila][columna + j] = "B"
+                    else:
+                        for j in range(eslora):
+                            self.matriz[fila + j ][columna]= "B"
+                
                     colocado= True #!Barco colocado con exito!, pasamos al siguente!
                     print("¡Barco colocado correctamente!✅👌")
                 except ValueError:
