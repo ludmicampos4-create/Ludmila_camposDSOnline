@@ -95,4 +95,3 @@ class Tablero:
 if __name__ == "__main__":
     mi_tablero = Tablero()
     mi_tablero.colocar_barcos()
-    
